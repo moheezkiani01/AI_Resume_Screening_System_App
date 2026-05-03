@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="results-container">
+    <div class="result-card">
+        <h2>🧠 AI-Powered NLP Analysis</h2>
+        
+        <div class="score-section">
+            <div class="score-circle">
+                <div class="score-value">{{ "%.2f"|format(result.score) }}%</div>
+                <div class="score-label">Overall Match</div>
+            </div>
+            <div class="score-details">
+                <div class="detail-item">
+                    <span>🔍 Semantic Similarity:</span>
+                    <strong>{{ "%.2f"|format(result.semantic_score) }}%</strong>
+                </div>
+                <div class="detail-item">
+                    <span>📊 TF-IDF Match:</span>
+                    <strong>{{ "%.2f"|format(result.tfidf_score) }}%</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="classification {{ result.status }}">
+            {{ result.classification }}
+        </div>
+        
+        <div class="result-section">
+            <h3>💡 NLP Insights</h3>
+            {% for feedback in result.feedback %}
+                <div class="feedback-item">{{ feedback|safe }}</div>
+            {% endfor %}
+        </div>
+        
+        <div class="result-section">
+            <br>
+            <h3>🎯 Key Phrases Detected</h3>
+            <div class="skills-list">
+                {% for phrase in result.key_phrases %}
+                    <span class="skill-tag">{{ phrase }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <br>
+            <h3>🔧 Skills Identified ({{ result.skills_count }})</h3>
+            <div class="skills-list">
+                {% for skill in result.skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Analyze Another</a>
+            <a href="{{ url_for('history') }}" class="btn btn-secondary">View History</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

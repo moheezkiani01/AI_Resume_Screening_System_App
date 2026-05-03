@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="history-container">
+    <h2>Screening History</h2>
+    
+    {% if results %}
+        <div class="table-responsive">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Filename</th>
+                        <th>Score</th>
+                        <th>Skills</th>
+                        <th>Classification</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td>{{ result.date }}</td>
+                        <td>{{ result.filename }}</td>
+                        <td>
+                            <span class="score-badge 
+                                {% if result.score >= 80 %}excellent
+                                {% elif result.score >= 65 %}good
+                                {% elif result.score >= 50 %}average
+                                {% else %}poor{% endif %}">
+                                {{ "%.2f"|format(result.score) }}%
+                            </span>
+                        </td>
+                        <td>{{ result.skills[:50] }}{% if result.skills|length > 50 %}...{% endif %}</td>
+                        <td>{{ result.classification }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No screening results yet.</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Start Screening</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
