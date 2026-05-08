@@ -10,3 +10,4 @@ Werkzeug
 PyPDF2
 textblob
 sqlite3
+
