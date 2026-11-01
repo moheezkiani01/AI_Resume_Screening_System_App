@@ -1,216 +1,154 @@
-# 🎯 AI Resume Screening System
-
 <div align="center">
 
-![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-2.3.3-000000?style=for-the-badge&logo=flask&logoColor=white)
-![spaCy](https://img.shields.io/badge/spaCy-3.7.2-09A3D5?style=for-the-badge&logo=spacy&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3.0-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+# AI Resume Screening System
 
-An intelligent NLP-powered web application that automatically screens resumes against job descriptions and provides a detailed match score with HR recommendations.
+### Intelligent NLP-driven applicant screening, multi-dimensional semantic matching, and HR decision support.
+
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-2.3%2B-000000?style=flat-square&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![spaCy](https://img.shields.io/badge/spaCy-3.7-09A3D5?style=flat-square&logo=spacy&logoColor=white)](https://spacy.io/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.4%2B-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![Deployment](https://img.shields.io/badge/Deployment-Vercel-black?style=flat-square&logo=vercel&logoColor=white)](https://ai-resume-screening-system-app.vercel.app)
+
+[**Live Demo**](https://ai-resume-screening-system-app.vercel.app) · [**Overview**](#overview) · [**Scoring Engine**](#scoring-methodology) · [**Architecture**](#system-architecture) · [**Setup**](#installation--setup) · [**Limitations**](#limitations--status)
 
 </div>
 
 ---
 
-## 📌 Table of Contents
+## Overview
 
-- [Overview](#-overview)
-- [Features](#-features)
-- [How It Works](#-how-it-works)
-- [Scoring System](#-scoring-system)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Installation & Setup](#-installation--setup)
-- [Usage](#-usage)
-- [Screenshots](#-screenshots)
-- [Team](#-team)
+High-volume talent acquisition often requires manually reviewing hundreds of resumes against diverse job descriptions—a process prone to fatigue, keyword bias, and inconsistency.
+
+The **AI Resume Screening System** is an NLP-powered application that evaluates candidate resumes against target job specifications. Rather than relying on simple keyword counting, the platform analyzes underlying semantic context, technical skill profiles, education relevance, and experience language to calculate an objective match score with actionable HR interview recommendations.
 
 ---
 
-## 🧠 Overview
+## Key Capabilities
 
-The **AI Resume Screening System** solves a real-world HR problem — manually reading hundreds of resumes is slow and inconsistent. This system uses **Artificial Intelligence and Natural Language Processing (NLP)** to:
-
-- Read and understand resume PDFs
-- Compare them against a job description
-- Generate an intelligent match score out of 100%
-- Provide detailed feedback and HR recommendations
-
-> Instead of simple keyword matching, our system understands the **meaning** behind the text using advanced NLP techniques like semantic similarity, TF-IDF, and named entity recognition.
-
----
-
-## ✅ Features
-
-| Feature | Description |
-|---|---|
-| 📄 PDF Resume Upload | Upload any PDF resume for analysis |
-| 💼 Job Description Input | Paste any job description to compare against |
-| 🧠 AI Match Scoring | Get a match score out of 100% using 4 NLP methods |
-| 🔧 Skills Detection | Automatically detects 60+ technical & soft skills |
-| 🏷️ Candidate Classification | Outstanding / Good / Potential / Low / Not Suitable |
-| 💡 Detailed Feedback | Tone analysis, key strengths, education & experience insights |
-| 🔑 Key Phrases | Extracts meaningful phrases from the resume |
-| 📊 Screening History | All past results stored and viewable anytime |
-| ✉️ HR Recommendation | Clear interview recommendation for each candidate |
+- **Automated PDF Parsing:** Extracts and normalizes unstructured text from uploaded PDF resumes.
+- **Multi-Method NLP Matching:** Evaluates candidates across semantic similarity, term frequency relevance, keyword overlap, and domain entity extraction.
+- **Skill & Competency Recognition:** Automatically identifies and categorizes 60+ technical and soft skills.
+- **Objective Candidate Classification:** Tiers candidates into *Outstanding*, *Good*, *Potential*, *Low*, or *Not Suitable*.
+- **Sentiment & Tone Analysis:** Assesses candidate tone and communication style using TextBlob.
+- **Persistent Screening History:** Stores previous evaluations, candidate summaries, and score breakdowns in an embedded SQLite database.
+- **Structured HR Recommendations:** Generates clear interview guidance and skill gap summaries for hiring teams.
 
 ---
 
-## ⚙️ How It Works
+## Scoring Methodology
+
+The overall match score (0–100%) is computed through a weighted combination of four complementary NLP techniques:
 
 ```
-User uploads PDF Resume + pastes Job Description
-              ↓
-     app.py receives the request
-              ↓
-  resume_processor.py extracts PDF text
-              ↓
-     NLP cleaning (lemmatization, stopword removal)
-              ↓
-   ┌──────────────────────────────────────┐
-   │  4 Scoring Methods Applied:          │
-   │  • Semantic Similarity (spaCy)       │
-   │  • TF-IDF Match (scikit-learn)       │
-   │  • Keyword Matching                  │
-   │  • Entity Matching (skills/edu)      │
-   └──────────────────────────────────────┘
-              ↓
-     Weighted Final Score Calculated
-              ↓
-   Skills, Phrases, Sentiment Extracted
-              ↓
-   Result saved to SQLite Database
-              ↓
-     Results page displayed to user
+Final Match Score = (Semantic Similarity × 0.40) + (TF-IDF Match × 0.30) + (Keyword Overlap × 0.20) + (Entity Matching × 0.10)
 ```
 
----
+| Technique | Weight | Purpose & Implementation |
+|---|:---:|---|
+| **Semantic Similarity** | **40%** | Measures conceptual alignment using **spaCy** medium word vectors (`en_core_web_md`), ensuring candidates with synonymous phrasing are fairly recognized. |
+| **TF-IDF Relevance** | **30%** | Leverages **scikit-learn** to measure the cosine similarity of high-importance job description tokens across the resume text. |
+| **Direct Keyword Overlap** | **20%** | Evaluates direct lexical correspondence between the job requirements and candidate profile. |
+| **Named Entity Extraction** | **10%** | Identifies specific accredited degrees, universities, certifications, and technical proficiencies. |
 
-## 📊 Scoring System
+### Classification Tiers
 
-The final score is a weighted combination of **4 NLP techniques**:
-
-| Method | Weight | Description |
+| Composite Score | Category | Recommended Action |
 |---|---|---|
-| 🔵 Semantic Similarity | **40%** | Uses spaCy word vectors to understand the *meaning* of text — not just matching words |
-| 🟢 TF-IDF Match | **30%** | Ranks words by importance and checks how many high-value job description terms appear in the resume |
-| 🟡 Keyword Matching | **20%** | Direct word-to-word overlap between resume and job description |
-| 🔴 Entity Matching | **10%** | Checks if specific skills and education keywords from the job description exist in the resume |
-
-### 🏷️ Classification Table
-
-| Score Range | Classification | Recommendation |
-|---|---|---|
-| ≥ 80% | 🟢 Outstanding Match | Highly recommended for interview |
-| 65% – 79% | 🔵 Good Match | Recommended for interview |
-| 50% – 64% | 🟡 Potential Match | Consider for further review |
-| 35% – 49% | 🟠 Low Match | Keep as backup candidate |
-| < 35% | 🔴 Not Suitable | Does not meet requirements |
+| **85% – 100%** | Outstanding Match | Fast-track to technical interview; strong candidate across all dimensions |
+| **70% – 84%** | Good Match | Recommended for initial screening interview; review secondary skill gaps |
+| **55% – 69%** | Potential Match | Consider for entry-level or adjacent positions; training may be required |
+| **40% – 54%** | Low Match | Insufficient core alignment with required specifications |
+| **< 40%** | Not Suitable | Significant qualification and experience mismatch |
 
 ---
 
-## 🛠️ Tech Stack
+## System Architecture
 
-| Category | Technology |
-|---|---|
-| Backend | Python 3.8+, Flask 2.3.3 |
-| NLP & AI | spaCy 3.7.2, NLTK 3.8.1, TextBlob 0.17.1 |
-| Machine Learning | scikit-learn 1.3.0, NumPy 1.24.3 |
-| PDF Processing | PyPDF2 3.0.1 |
-| Database | SQLite (via Python sqlite3) |
-| Frontend | HTML5, CSS3, Jinja2 Templates |
-
----
-
-## 📁 Project Structure
-
-```
-ai-resume-screening/
-│
-├── app.py                  # Main Flask web server & routes
-├── resume_processor.py     # Core AI & NLP logic
-├── database.py             # SQLite database management
-├── requirements.txt        # Python dependencies
-│
-├── templates/
-│   ├── base.html           # Base layout with navbar
-│   ├── index.html          # Home page (upload form)
-│   ├── results.html        # Analysis results page
-│   └── history.html        # Screening history page
-│
-├── static/
-│   └── css/
-│       └── style.css       # Stylesheet
-│    └── js/
-│       └── main.js  
-└── uploads/                # Temporary PDF storage (auto-created)
+```mermaid
+flowchart TD
+    A[Recruiter Uploads PDF & Job Description] --> B[Flask Web Controller / app.py]
+    B --> C[PDF Text Extraction & Normalization]
+    C --> D[Text Processing Pipeline]
+    
+    subgraph NLP_Pipeline [NLP Feature Extraction]
+        D --> E1[spaCy Semantic Vector Similarity]
+        D --> E2[scikit-learn TF-IDF Vectorizer]
+        D --> E3[Lexical Keyword Matcher]
+        D --> E4[Named Entity & Skill Extractor]
+    end
+    
+    E1 --> F[Weighted Composite Scoring Engine]
+    E2 --> F
+    E3 --> F
+    E4 --> F
+    
+    F --> G[Classification & Recommendation Generator]
+    G --> H[(SQLite Database)]
+    G --> I[Render Results & Detailed Breakdown]
 ```
 
 ---
 
-## 🚀 Installation & Setup
+## Project Structure
 
-### Prerequisites
-- Python 3.8 or higher
-- pip package manager
+```
+AI_Resume_Screening_System_App/
+├── app.py                  # Flask server application & route controllers
+├── resume_processor.py     # NLP parsing, spaCy vector scoring, and TF-IDF calculation
+├── database.py             # SQLite database models, initialization, and audit logging
+├── requirements.txt        # Runtime dependencies
+├── index.html              # Candidate submission and job description upload UI
+├── results.html            # Score breakdown, skill analysis, and recommendation display
+├── history.html            # Historical screening audit records view
+├── base.html               # Shared layout template
+├── style.css               # User interface stylesheet
+└── main.js                 # Dynamic frontend interactions and file upload handling
+```
 
-### Step 1 — Clone the Repository
+---
+
+## Installation & Setup
+
+### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/moheezkiani01/ai-resume-screening.git
-cd ai-resume-screening
+git clone https://github.com/moheezkiani01/AI_Resume_Screening_System_App.git
+cd AI_Resume_Screening_System_App
 ```
 
-### Step 2 — Install Dependencies
+### 2. Configure Virtual Environment
+
 ```bash
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
-### Step 3 — Download spaCy Language Model
+### 3. Download NLP Models & Corpora
+
 ```bash
 python -m spacy download en_core_web_md
+python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
 ```
 
-### Step 4 — Download NLTK Data
-```bash
-python -c "import nltk; nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('punkt')"
-```
+### 4. Run the Application
 
-### Step 5 — Run the Application
 ```bash
 python app.py
 ```
 
-### Step 6 — Open in Browser
-```
-http://localhost:5000
-```
+Open your browser at `http://localhost:5000`.
 
 ---
 
-## 📖 Usage
+## Limitations & Status
 
-1. Go to the **Home** page
-2. Click **Upload Resume** and select a PDF file
-3. Paste the **Job Description** into the text box
-4. Click **Analyze Resume**
-5. View your detailed AI analysis results including:
-   - Overall match score
-   - Skills detected
-   - NLP insights & feedback
-   - HR recommendation
-6. Visit **History** to see all past screenings
-
----
-
-**Instructor:** Sir Philemon Philip
-
----
-
-## 📄 License
-
-This project is for educational purposes under Superior University, Lahore.
-
----
-</div>
+- **Format Scope:** Optimized for single and multi-page text-based PDF resumes; scanned image-only PDFs require an OCR preprocessing step.
+- **Domain Focus:** Skill dictionaries are currently calibrated for software engineering, data science, and technology roles.
+- **Human in the Loop:** Intended as an advisory screening tool for HR professionals; hiring decisions should incorporate comprehensive human evaluation.
